@@ -1,0 +1,206 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+model User {
+  id                   String           @id @default(auto()) @map("_id") @db.ObjectId
+  profile_picture      String?
+  first_name           String
+  last_name            String
+  email                String           @unique
+  password             String
+  phone_number         String
+  parents_phone_number String?
+  stage                String?
+  stage_2              String?
+  subject              String?
+  role                 String
+  stripeCustomer       StripeCustomer?
+  courses              Course[]         @relation("UserCourses")
+  purchases            Purchase[]       @relation("UserPurchases")
+  progress             UserProgress[]
+  examResults          UserExamResult[]
+  coupons              Coupon[]         @relation("UserCoupons")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Course {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    @db.ObjectId
+  user        User      @relation("UserCourses", fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  imageUrl    String?
+  isPublished Boolean   @default(false)
+  categoryId  String?   @db.ObjectId
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  chapters Chapter[]
+
+  @@index([categoryId])
+  @@fulltext([title])
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Attachment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+  Chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapterId String?  @db.ObjectId
+
+  @@index([chapterId])
+}
+
+model Chapter {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  price       Float?
+  videoUrl    String?
+  attachments Attachment[]
+  purchases   Purchase[]
+  position    Int
+  isPublished Boolean      @default(false)
+  isFree      Boolean      @default(false)
+  muxData     MuxData?
+
+  courseId String @db.ObjectId
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  userProgress UserProgress[]
+  exam         Exam?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  Coupon    Coupon[]
+
+  @@index([courseId])
+}
+
+model MuxData {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  chapterId  String  @unique @db.ObjectId
+  chapter    Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  assetId    String
+  playbackId String?
+}
+
+model UserProgress {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @db.ObjectId
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId   String  @db.ObjectId
+  chapter     Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isCompleted Boolean @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@unique([userId, chapterId])
+  @@index([chapterId])
+}
+
+model Purchase {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation("UserPurchases", fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String?  @db.ObjectId
+  Chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@unique([userId, chapterId])
+  @@index([chapterId])
+}
+
+model StripeCustomer {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String @unique @db.ObjectId
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Coupon {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  code      String   @unique
+  chapterId String   @db.ObjectId
+  Chapter   Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  userId    String?  @db.ObjectId
+  user      User?    @relation("UserCoupons", fields: [userId], references: [id], onDelete: Cascade)
+  isUsed    Boolean  @default(false)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@unique([userId, chapterId])
+}
+
+model Exam {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  chapterId String     @unique @db.ObjectId
+  chapter   Chapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  questions Question[]
+
+  UserExamResults UserExamResult[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Question {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  examId    String   @db.ObjectId
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  text      String
+  imageUrl  String?
+  choices   Choice[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+}
+
+model Choice {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  questionId String   @db.ObjectId
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @map("updated_at")
+
+  @@index([questionId])
+}
+
+model UserExamResult {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examId    String   @db.ObjectId
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  marks     Float
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@unique([userId, examId])
+  @@index([examId])
+}
