@@ -1,13 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Course,Chapter } from "@prisma/client";
+import { Course, Chapter } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  MoreHorizontal,
-  Pencil,
-} from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,19 +14,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-interface CourseWithChapters {
-  id: string;
-  userId: string;
-  title: string;
-  description: string | null;
-  imageUrl: string | null;
-  isPublished: boolean;
-  categoryId: string | null;
-  createdAt: Date;
-  chapters: Chapter[]; // Adjust the type as needed
+// Define an interface that extends the Course type and adds chapters
+interface CourseWithChapters extends Course {
+  chapters: Chapter[];
 }
 
-export const columns: ColumnDef<Course>[] = [
+export const columns: ColumnDef<CourseWithChapters>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -59,11 +48,8 @@ export const columns: ColumnDef<Course>[] = [
       );
     },
     cell: ({ row }) => {
-      // Ensure that chapters are an array
       const chapters = row.original.chapters || [];
-      return (
-        <div>{chapters.length}</div>
-      );
+      return <div>{chapters.length}</div>;
     },
   },
   {
@@ -80,7 +66,7 @@ export const columns: ColumnDef<Course>[] = [
       );
     },
     cell: ({ row }) => {
-      const isPublished = row.getValue("isPublished") || false;
+      const isPublished = row.getValue("isPublished") as boolean;
       return (
         <Badge className={cn("bg-sky-700", !isPublished && "bg-slate-500")}>
           {isPublished ? "جاهز" : "غير جاهز"}
@@ -105,7 +91,7 @@ export const columns: ColumnDef<Course>[] = [
             <DropdownMenuItem>
               <Link
                 className="flex w-full justify-end align-end"
-                href={`/teacher/courses/${row.original.id}`}
+                href={`/teacher/courses/${id}`}
               >
                 تعديل
                 <Pencil className="h-4 w-4 ml-2" />
