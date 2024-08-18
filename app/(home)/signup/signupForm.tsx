@@ -41,7 +41,7 @@ const signupSchema = z
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
-export function SignupForm() {
+export default function SignupForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -303,5 +303,3 @@ export function SignupForm() {
     </div>
   );
 }
-
-export default SignUpForm;
