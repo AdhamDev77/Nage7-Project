@@ -303,3 +303,5 @@ export function SignupForm() {
     </div>
   );
 }
+
+export default SignUpForm;
