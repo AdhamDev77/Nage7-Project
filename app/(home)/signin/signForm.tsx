@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import signImg from "./signImg.jpg";
 import Image from "next/image";
@@ -77,7 +77,7 @@ export function SignForm() {
                 />
                 {errors.email && (
                   <span className="text-red-600 text-xs">
-                    {errors.email.message}
+                    {errors.email?.message}
                   </span>
                 )}
               </div>
@@ -98,18 +98,18 @@ export function SignForm() {
                 />
                 {errors.password && (
                   <span className="text-red-600 text-xs">
-                    {errors.password.message}
+                    {errors.password?.message}
                   </span>
                 )}
               </div>
               {error && <p className="text-red-600 text-xs">{error}</p>}
               <Button type="submit" className="w-full" disabled={loading}>
-                Login
+                {loading ? "Logging in..." : "Login"}
               </Button>
             </form>
           </div>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/signup" className="underline">
               Sign up
             </Link>

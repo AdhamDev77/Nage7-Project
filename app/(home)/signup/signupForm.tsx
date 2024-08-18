@@ -223,49 +223,82 @@ export function SignupForm() {
                       )}
                     </div>
                   )}
+
+                  <InputField
+                    id="parentsPhoneNumber"
+                    label="رقم هاتف ولي الأمر"
+                    register={register}
+                    errors={errors}
+                    placeholder=""
+                  />
                 </>
               )}
 
               {role === "teacher" && (
-                <InputField id="subject" label="المادة" placeholder="الرياضيات" register={register} errors={errors} />
+                <InputField id="subject" label="المادة" register={register} errors={errors} placeholder="" />
               )}
-
-              <InputField id="parentsPhoneNumber" label="رقم هاتف ولي الأمر" placeholder="" register={register} errors={errors} />
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="profile_picture">صورة الملف الشخصي</Label>
-                <input
-                  type="file"
-                  id="profile_picture"
-                  accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files?.[0]) {
-                      const file = e.target.files[0];
-                      const reader = new FileReader();
-                      reader.onloadend = () => setImageUrl(reader.result as string);
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="p-3 border border-gray-300 rounded-lg shadow-sm"
-                />
-                {imageUrl && (
-                  <div className="mt-2">
-                    <img src={imageUrl} alt="Profile Preview" className="w-32 h-32 object-cover rounded-full" />
+                {imageUrl ? (
+                  <div>
+                    <img src={imageUrl} alt="Profile" className="w-20 h-20 object-cover rounded-full" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl(null)}
+                      className="p-1 text-sm text-red-500"
+                    >
+                      تعديل الصورة
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setImageUrl(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="p-3 border border-gray-300 rounded-lg shadow-sm"
+                    />
+                    {errors.profile_picture && (
+                      <span className="text-red-600 text-sm">{errors.profile_picture?.message}</span>
+                    )}
                   </div>
                 )}
               </div>
 
-              {error && <div className="text-red-600">{error}</div>}
-              {success && <div className="text-green-600">{success}</div>}
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "جاري التسجيل..." : "تسجيل"}
+              {error && <p className="text-red-600">{error}</p>}
+              {success && <p className="text-green-600">{success}</p>}
+
+              <Button type="submit" disabled={loading} className="w-full p-3 text-white bg-blue-500 rounded-lg shadow-sm">
+                {loading ? "جارٍ التسجيل..." : "إنشاء الحساب"}
               </Button>
             </form>
           </CardContent>
         </Card>
-        <div className="mt-4 text-center">
-          <p>لديك حساب بالفعل؟ <Link href="/signin" className="text-blue-600">تسجيل الدخول</Link></p>
-        </div>
+
+        <p className="mt-4 text-sm text-center text-gray-600">
+          لديك حساب بالفعل؟{" "}
+          <Link href="/signin" className="text-blue-500 underline">
+            تسجيل الدخول
+          </Link>
+        </p>
+      </div>
+
+      <div className="hidden md:block md:w-1/2">
+        <img
+          src="/signup-bg.jpg" // Replace with your image path
+          alt="Signup Background"
+          className="object-cover w-full h-full"
+        />
       </div>
     </div>
   );
