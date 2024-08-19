@@ -32,7 +32,6 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@tanstack/react-table": "^8.17.3",
     "@uploadthing/react": "^6.6.0",
-    "argon2": "^0.40.3",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",

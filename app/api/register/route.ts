@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import argon2 from 'argon2';
+import bcrypt from 'bcryptjs'; // Import bcryptjs
 import { db } from '@/lib/db';
 
 // Define Zod schema for validation
@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email is already in use.' }, { status: 409 });
     }
 
-    // Hash the password using Argon2
-    const hashedPassword = await argon2.hash(password);
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Prepare user data with optional fields
     const userData: {

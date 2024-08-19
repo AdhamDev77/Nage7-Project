@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import argon2 from 'argon2';
+import bcrypt from 'bcryptjs'; // Import bcryptjs
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
     }
 
-    // Verify the password using Argon2
-    const isPasswordValid = await argon2.verify(user.password, password);
+    // Verify the password using bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// Uncomment if bodyParser is required
 // export const config = {
 //   api: {
 //     bodyParser: true,

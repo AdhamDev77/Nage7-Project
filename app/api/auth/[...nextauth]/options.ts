@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs"; // Import bcryptjs
 
 const authorizeUser = async (credentials: { email: string; password: string }) => {
   if (!credentials?.email || !credentials?.password) {
@@ -16,7 +16,8 @@ const authorizeUser = async (credentials: { email: string; password: string }) =
     throw new Error("Invalid credentials");
   }
 
-  const isCorrectPassword = await argon2.verify(user.password, credentials.password);
+  // Use bcrypt to compare passwords
+  const isCorrectPassword = await bcrypt.compare(credentials.password, user.password);
 
   if (!isCorrectPassword) {
     throw new Error("Invalid credentials");
