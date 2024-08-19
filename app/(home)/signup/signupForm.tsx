@@ -158,7 +158,7 @@ export default function SignupForm() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <InputField id="firstName" label="الاسم الأول" placeholder="ماكس" register={register} errors={errors} />
-                <InputField id="lastName" label="الاسم الأخير" placeholder="روبينسون" register={register} errors={errors} />
+                <InputField id="lastName" label="اسم العائلة" placeholder="روبينسون" register={register} errors={errors} />
               </div>
               <InputField id="email" label="البريد الإلكتروني" placeholder="m@example.com" type="email" register={register} errors={errors} />
               <InputField id="password" label="كلمة المرور" type="password" register={register} errors={errors} placeholder="" />
@@ -282,20 +282,21 @@ export default function SignupForm() {
                 {loading ? "جارٍ التسجيل..." : "إنشاء الحساب"}
               </Button>
             </form>
-          </CardContent>
-        </Card>
-
-        <p className="mt-4 text-sm text-center text-gray-600">
+            <p className="mt-4 text-sm text-center text-gray-600">
           لديك حساب بالفعل؟{" "}
           <Link href="/signin" className="text-blue-500 underline">
             تسجيل الدخول
           </Link>
         </p>
+          </CardContent>
+        </Card>
+
+
       </div>
 
       <div className="hidden md:block md:w-1/2">
         <img
-          src="/signup-bg.jpg" // Replace with your image path
+          src="/14250.jpg" // Replace with your image path
           alt="Signup Background"
           className="object-cover w-full h-full"
         />

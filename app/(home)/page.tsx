@@ -7,12 +7,10 @@ import Testimonial from "./_components/testimonial";
 import Student1 from '@/public/Student1.webp'
 import { useAuth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import { getCurrentUser } from "@/lib/session";
 
 export default async function Home() {
   const session = await getCurrentUser();
-  const {userId} = auth()
 
   if(session?.user){
     return redirect('/search')

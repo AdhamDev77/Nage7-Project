@@ -1,13 +1,11 @@
-import { clerkMiddleware, ClerkMiddlewareOptions } from "@clerk/nextjs/server";
+// middleware.ts or middleware.js (depending on your setup)
+import { NextResponse } from 'next/server';
 
-export default clerkMiddleware({
-  // You can still use options for Clerk here if needed
-} as ClerkMiddlewareOptions);
-//a
+export function middleware() {
+  // Allow all routes without restriction
+  return NextResponse.next();
+}
+
 export const config = {
-  matcher: [
-    "/((?!.*\\..*|_next).*)",
-    "/",
-    "/(api|trpc)(.*)"
-  ],
+  matcher: ['/', '/(.*)'], // Apply to all routes
 };

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 import { Button } from "./ui/button";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogInIcon, LogOut, Plus } from "lucide-react";
 import Link from "next/link";
 import SearchInput from "./search-input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -149,6 +149,29 @@ const NavbarRoutes: React.FC = () => {
                 </Avatar>
               </DropdownMenuTrigger>
               <NavMenu />
+            </DropdownMenu>
+          )}
+          {!session && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                  <div className="text-white bg-black p-2 px-5 rounded-md">تسجيل</div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+        <>
+          <DropdownMenuItem
+            className="cursor-pointer flex gap-x-2 justify-center items-center hover:bg-slate-100"
+          >
+                      <Link className="flex gap-x-2 justify-center items-center" href="/signin">
+            تسجيل دخول <LogInIcon className="w-4 h-4" />
+          </Link>
+          </DropdownMenuItem>
+        </>
+        <DropdownMenuItem className="flex gap-x-2 justify-center items-center hover:bg-slate-100">
+          <Link className="flex gap-x-2 justify-center items-center" href="/signup">
+            حساب جديد <Plus className="w-4 h-4" />
+          </Link>
+        </DropdownMenuItem>
+    </DropdownMenuContent>
             </DropdownMenu>
           )}
         </div>
